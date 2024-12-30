@@ -1,31 +1,22 @@
 import { Button } from '@/components/ui/button';
-
-interface CharacterDetails {
-  name: string;
-  gender: string;
-  age: string;
-  hairColor: string;
-  eyeColor: string;
-  favoriteColor: string;
-}
+import {
+  BasicCharacterDetails,
+  StoryDetails,
+  CustomizationDetails,
+} from '@/app/page';
 
 interface OrderConfirmationProps {
-  characterDetails: CharacterDetails;
-  selectedStory: string;
+  basicCharacterDetails: BasicCharacterDetails;
+  selectedStory: StoryDetails;
+  customizationDetails: CustomizationDetails;
   nextStep: () => void;
   prevStep: () => void;
 }
 
-const storyTitles = {
-  adventure: 'The Lost Treasure of Atlantis',
-  mystery: 'The Haunted Mansion Mystery',
-  'fairy-tale': 'The Enchanted Forest',
-  superhero: 'Cosmic Defenders',
-};
-
 export default function OrderConfirmation({
-  characterDetails,
+  basicCharacterDetails,
   selectedStory,
+  customizationDetails,
   nextStep,
   prevStep,
 }: OrderConfirmationProps) {
@@ -43,41 +34,30 @@ export default function OrderConfirmation({
         <h3 className="mb-2 font-semibold">Character Details:</h3>
         <ul className="mb-4 list-inside list-disc">
           <li>
-            <span className="font-semibold">Name:</span> {characterDetails.name}
+            <span className="font-semibold">Name:</span>{' '}
+            {basicCharacterDetails.name}
           </li>
           <li>
-            <span className="font-semibold">Gender:</span>{' '}
-            {characterDetails.gender}
+            <span className="font-semibold">Age:</span>{' '}
+            {basicCharacterDetails.age}
           </li>
-          <li>
-            <span className="font-semibold">Age:</span> {characterDetails.age}
-          </li>
-          {characterDetails.hairColor && (
-            <li>
-              <span className="font-semibold">Hair Color:</span>{' '}
-              {characterDetails.hairColor}
-            </li>
-          )}
-          {characterDetails.eyeColor && (
-            <li>
-              <span className="font-semibold">Eye Color:</span>{' '}
-              {characterDetails.eyeColor}
-            </li>
-          )}
-          {characterDetails.favoriteColor && (
-            <li>
-              <span className="font-semibold">Favorite Color:</span>{' '}
-              {characterDetails.favoriteColor}
-            </li>
-          )}
         </ul>
-        <p className="mb-2">
-          <span className="font-semibold">Selected Story:</span>{' '}
-          {storyTitles[selectedStory as keyof typeof storyTitles]}
-        </p>
+        <h3 className="mb-2 font-semibold">Story:</h3>
+        <p className="mb-2">{selectedStory.title}</p>
+        <h3 className="mb-2 font-semibold">Customizations:</h3>
+        <ul className="mb-4 list-inside list-disc">
+          {Object.entries(customizationDetails).map(([key, value]) => (
+            <li key={key}>
+              <span className="font-semibold">
+                {selectedStory.customizationOptions[key].label}:
+              </span>{' '}
+              {value}
+            </li>
+          ))}
+        </ul>
         <p className="text-sm text-purple-700">
-          Your personalized storybook will feature {characterDetails.name} in an
-          exciting adventure!
+          Your personalized storybook featuring {basicCharacterDetails.name} in{' '}
+          {selectedStory.title} is ready to be created!
         </p>
       </div>
       <form onSubmit={handleSubmit}>

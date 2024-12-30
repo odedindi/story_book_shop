@@ -1,42 +1,18 @@
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { StoryDetails } from '@/app/page';
 
 interface StorySelectionProps {
-  selectedStory: string;
-  setSelectedStory: (story: string) => void;
+  stories: StoryDetails[];
+  selectedStory: StoryDetails | null;
+  setSelectedStory: (story: StoryDetails) => void;
   nextStep: () => void;
   prevStep: () => void;
 }
 
-const stories = [
-  {
-    id: 'adventure',
-    title: 'The Lost Treasure of Atlantis',
-    description:
-      'Embark on an underwater adventure to find the legendary lost city.',
-  },
-  {
-    id: 'mystery',
-    title: 'The Haunted Mansion Mystery',
-    description:
-      'Solve the spooky secrets hidden within an old, mysterious house.',
-  },
-  {
-    id: 'fairy-tale',
-    title: 'The Enchanted Forest',
-    description:
-      'Journey through a magical forest filled with talking animals and fairy creatures.',
-  },
-  {
-    id: 'superhero',
-    title: 'Cosmic Defenders',
-    description:
-      'Join a team of superheroes to save the galaxy from an evil alien invasion.',
-  },
-];
-
 export default function StorySelection({
+  stories,
   selectedStory,
   setSelectedStory,
   nextStep,
@@ -56,8 +32,10 @@ export default function StorySelection({
       </h2>
       <form onSubmit={handleSubmit}>
         <RadioGroup
-          value={selectedStory}
-          onValueChange={setSelectedStory}
+          value={selectedStory?.id}
+          onValueChange={(value) =>
+            setSelectedStory(stories.find((s) => s.id === value) || stories[0])
+          }
           className="mb-6 space-y-4"
         >
           {stories.map((story) => (
@@ -77,7 +55,7 @@ export default function StorySelection({
             Back
           </Button>
           <Button type="submit" disabled={!selectedStory}>
-            Choose Your Adventure
+            Customize Your Story
           </Button>
         </div>
       </form>

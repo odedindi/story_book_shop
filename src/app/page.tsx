@@ -1,73 +1,142 @@
 'use client';
 
-import CharacterInput from '@/components/CharacterInput';
-import OrderConfirmation from '@/components/OrderConfirmation';
-import StorySelection from '@/components/StorySelection';
-import ThankYou from '@/components/ThankYou';
 import { useState } from 'react';
+import Layout from '@/components/Layout';
+import BasicCharacterInput from '@/components/BasicCharacterInput';
+import StorySelection from '@/components/StorySelection';
+import StoryCustomization from '@/components/StoryCustomization';
+import OrderConfirmation from '@/components/OrderConfirmation';
+import ThankYou from '@/components/ThankYou';
 
-interface CharacterDetails {
+export interface BasicCharacterDetails {
   name: string;
-  gender: string;
-  age: string;
-  hairColor: string;
-  eyeColor: string;
-  favoriteColor: string;
+  age: number;
 }
 
-export default function Home() {
+export interface StoryDetails {
+  id: string;
+  title: string;
+  description: string;
+  customizationOptions: {
+    [key: string]: {
+      type: 'select' | 'input';
+      label: string;
+      options?: string[];
+    };
+  };
+}
+
+export interface CustomizationDetails {
+  [key: string]: string;
+}
+
+const stories: StoryDetails[] = [
+  {
+    id: 'space-adventure',
+    title: 'Space Adventure',
+    description: 'Embark on an intergalactic journey to save the universe!',
+    customizationOptions: {
+      alienFriend: { type: 'input', label: "Alien Friend's Name" },
+      spaceship: {
+        type: 'select',
+        label: 'Spaceship Color',
+        options: ['Red', 'Blue', 'Green', 'Silver'],
+      },
+      planet: {
+        type: 'select',
+        label: 'Planet to Explore',
+        options: ['Mars', 'Jupiter', 'Saturn', 'Neptune'],
+      },
+    },
+  },
+  {
+    id: 'underwater-quest',
+    title: 'Underwater Quest',
+    description: 'Dive into an oceanic adventure to discover hidden treasures!',
+    customizationOptions: {
+      seaCreature: {
+        type: 'select',
+        label: 'Sea Creature Companion',
+        options: ['Dolphin', 'Octopus', 'Seahorse', 'Turtle'],
+      },
+      treasure: { type: 'input', label: 'Hidden Treasure' },
+      underwaterCity: { type: 'input', label: 'Underwater City Name' },
+    },
+  },
+  {
+    id: 'enchanted-forest',
+    title: 'Enchanted Forest',
+    description: 'Explore a magical forest filled with mythical creatures!',
+    customizationOptions: {
+      magicalPower: {
+        type: 'select',
+        label: 'Magical Power',
+        options: [
+          'Invisibility',
+          'Flying',
+          'Talking to Animals',
+          'Shape-shifting',
+        ],
+      },
+      forestGuardian: { type: 'input', label: "Forest Guardian's Name" },
+      enchantedItem: { type: 'input', label: 'Enchanted Item' },
+    },
+  },
+];
+
+export default function CustomStorybookShop() {
   const [step, setStep] = useState(1);
-  const [characterDetails, setCharacterDetails] = useState<CharacterDetails>({
-    name: '',
-    gender: '',
-    age: '',
-    hairColor: '',
-    eyeColor: '',
-    favoriteColor: '',
-  });
-  const [selectedStory, setSelectedStory] = useState('');
+  const [basicCharacterDetails, setBasicCharacterDetails] =
+    useState<BasicCharacterDetails>({ name: '', age: 0 });
+  const [selectedStory, setSelectedStory] = useState<StoryDetails | null>(null);
+  const [customizationDetails, setCustomizationDetails] =
+    useState<CustomizationDetails>({});
 
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-100 to-blue-100">
-      <div className="container mx-auto px-4 py-8">
-        <header className="mb-8 text-center">
-          <h1 className="mb-2 text-4xl font-bold text-purple-800">
-            Magical Storybook Creator
-          </h1>
-          <p className="text-xl text-purple-600">
-            Create your own personalized adventure!
-          </p>
-        </header>
-        <main className="mx-auto max-w-2xl rounded-lg bg-white p-6 shadow-lg md:p-8">
-          {step === 1 && (
-            <CharacterInput
-              characterDetails={characterDetails}
-              setCharacterDetails={setCharacterDetails}
-              nextStep={nextStep}
-            />
-          )}
-          {step === 2 && (
-            <StorySelection
-              selectedStory={selectedStory}
-              setSelectedStory={setSelectedStory}
-              nextStep={nextStep}
-              prevStep={prevStep}
-            />
-          )}
-          {step === 3 && (
-            <OrderConfirmation
-              characterDetails={characterDetails}
-              selectedStory={selectedStory}
-              nextStep={nextStep}
-              prevStep={prevStep}
-            />
-          )}
-          {step === 4 && <ThankYou characterDetails={characterDetails} />}
-        </main>
-      </div>
-    </div>
+    <Layout>
+      {step === 1 && (
+        <BasicCharacterInput
+          basicCharacterDetails={basicCharacterDetails}
+          setBasicCharacterDetails={setBasicCharacterDetails}
+          nextStep={nextStep}
+        />
+      )}
+      {step === 2 && (
+        <StorySelection
+          stories={stories}
+          selectedStory={selectedStory}
+          setSelectedStory={setSelectedStory}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      )}
+      {step === 3 && selectedStory && (
+        <StoryCustomization
+          story={selectedStory}
+          customizationDetails={customizationDetails}
+          setCustomizationDetails={setCustomizationDetails}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      )}
+      {step === 4 && selectedStory && (
+        <OrderConfirmation
+          basicCharacterDetails={basicCharacterDetails}
+          selectedStory={selectedStory}
+          customizationDetails={customizationDetails}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      )}
+      {step === 5 && selectedStory && (
+        <ThankYou
+          basicCharacterDetails={basicCharacterDetails}
+          selectedStory={selectedStory}
+        />
+      )}
+    </Layout>
   );
 }
