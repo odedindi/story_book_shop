@@ -6,9 +6,25 @@ import StorySelection from '@/components/StorySelection';
 import ThankYou from '@/components/ThankYou';
 import { useState } from 'react';
 
+interface CharacterDetails {
+  name: string;
+  gender: string;
+  age: string;
+  hairColor: string;
+  eyeColor: string;
+  favoriteColor: string;
+}
+
 export default function Home() {
   const [step, setStep] = useState(1);
-  const [characterName, setCharacterName] = useState('');
+  const [characterDetails, setCharacterDetails] = useState<CharacterDetails>({
+    name: '',
+    gender: '',
+    age: '',
+    hairColor: '',
+    eyeColor: '',
+    favoriteColor: '',
+  });
   const [selectedStory, setSelectedStory] = useState('');
 
   const nextStep = () => setStep(step + 1);
@@ -28,8 +44,8 @@ export default function Home() {
         <main className="mx-auto max-w-2xl rounded-lg bg-white p-6 shadow-lg md:p-8">
           {step === 1 && (
             <CharacterInput
-              characterName={characterName}
-              setCharacterName={setCharacterName}
+              characterDetails={characterDetails}
+              setCharacterDetails={setCharacterDetails}
               nextStep={nextStep}
             />
           )}
@@ -43,13 +59,13 @@ export default function Home() {
           )}
           {step === 3 && (
             <OrderConfirmation
-              characterName={characterName}
+              characterDetails={characterDetails}
               selectedStory={selectedStory}
               nextStep={nextStep}
               prevStep={prevStep}
             />
           )}
-          {step === 4 && <ThankYou characterName={characterName} />}
+          {step === 4 && <ThankYou characterDetails={characterDetails} />}
         </main>
       </div>
     </div>
